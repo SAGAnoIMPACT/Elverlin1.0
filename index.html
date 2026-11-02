@@ -27,27 +27,32 @@
     }
 
     .game {
+      position: relative;
       width: min(100%, 960px);
       overflow: hidden;
     }
 
     .game.is-collapsed {
-      position: fixed;
-      bottom: 18px;
-      left: 18px;
-      z-index: 10;
-      width: auto;
+      width: min(100%, 960px);
       overflow: visible;
     }
 
     .stage {
       position: relative;
-      min-height: clamp(330px, 58vw, 520px);
+      width: 100%;
+      aspect-ratio: 4038 / 2480;
       overflow: hidden;
       isolation: isolate;
     }
 
-    .game.is-collapsed .stage,
+    .map-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .game.is-collapsed .dialogue {
       display: none;
     }
@@ -63,6 +68,10 @@
     }
 
     .game.is-collapsed .chat-launcher {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      z-index: 10;
       display: grid;
       place-items: center;
     }
@@ -84,6 +93,122 @@
       object-position: center bottom;
       filter: drop-shadow(0 12px 18px #11182766);
       animation: appear 550ms ease-out both;
+      z-index: 1;
+    }
+
+    .game.is-intro-complete .character {
+      display: none;
+    }
+
+    .game.is-showing-location .character {
+      display: block;
+    }
+
+    .game.is-chatting .character {
+      display: block;
+    }
+
+    .map-location {
+      position: absolute;
+      z-index: 2;
+      min-height: 0;
+      padding: 0;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .map-location:hover {
+      border-color: #ffe08a;
+      background: #ffe08a24;
+    }
+
+    .map-location:disabled {
+      pointer-events: none;
+    }
+
+    .map-location:focus-visible {
+      border-color: #ffe08a;
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .map-location.church {
+      left: 4%;
+      top: 13%;
+      width: 19%;
+      height: 32%;
+    }
+
+    .map-location.castle {
+      left: 33%;
+      top: 7%;
+      width: 24%;
+      height: 43%;
+    }
+
+    .map-location.house {
+      left: 59%;
+      top: 5%;
+      width: 19%;
+      height: 33%;
+    }
+
+    .map-location.farm {
+      left: 66%;
+      top: 30%;
+      width: 20%;
+      height: 24%;
+    }
+
+    .map-location.tavern-west {
+      left: 5%;
+      top: 48%;
+      width: 17%;
+      height: 31%;
+    }
+
+    .map-location.restaurant {
+      left: 21%;
+      top: 47%;
+      width: 16%;
+      height: 26%;
+    }
+
+    .map-location.knight {
+      left: 48%;
+      top: 46%;
+      width: 22%;
+      height: 24%;
+    }
+
+    .map-location.tavern-east {
+      left: 80%;
+      top: 39%;
+      width: 19%;
+      height: 31%;
+    }
+
+    .map-location.guild {
+      left: 47%;
+      top: 66%;
+      width: 24%;
+      height: 32%;
+    }
+
+    .map-hint {
+      position: absolute;
+      z-index: 3;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 12px;
+      border: 1px solid #ffffff66;
+      border-radius: 999px;
+      background: #171629d9;
+      color: #fff;
+      font-size: 0.8rem;
+      pointer-events: none;
     }
 
     @keyframes appear {
@@ -99,8 +224,13 @@
     }
 
     .dialogue {
-      position: relative;
-      margin: -2px 18px 18px;
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      left: 18px;
+      z-index: 4;
+      cursor: pointer;
+      margin: 0;
       padding: 22px 24px 18px;
       border: 1px solid #ffffff45;
       border-radius: 14px;
@@ -131,13 +261,9 @@
 
     .controls {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
     }
 
-    .hint,
-    .counter {
+    .hint {
       color: #c9c4df;
       font-size: 0.82rem;
     }
@@ -160,14 +286,6 @@
     button:focus-visible {
       outline: 3px solid #f7d8ff;
       outline-offset: 3px;
-    }
-
-    .next {
-      background: #9266a8;
-    }
-
-    .next:hover {
-      background: #a77cbd;
     }
 
     .choices {
@@ -193,17 +311,24 @@
       }
 
       .stage {
-        min-height: 390px;
+        width: 100%;
       }
 
       .character {
         left: 2%;
-        width: 82%;
-        height: 87%;
+        width: 42%;
+        height: 55%;
+      }
+
+      .map-hint {
+        top: 6px;
+        font-size: 0.68rem;
       }
 
       .dialogue {
-        margin: -2px 10px 10px;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
         padding: 22px 16px 15px;
       }
 
@@ -226,17 +351,29 @@
 
 <body>
   <main class="game" aria-label="ตัวอย่างเกม Visual Novel">
-    <section class="stage" aria-label="ฉากยามเย็น">
+    <section class="stage" aria-label="แผนที่เมือง Dead Garden">
+      <img class="map-background" src="Character/Map.PNG" alt="แผนที่เมือง Dead Garden">
       <img class="character" src="Character/Elverlin.PNG" alt="ตัวละคร Elverlin">
+      <span class="map-hint">กดเลือกสถานที่บนแผนที่เพื่อฟังเอลเวอร์ลินอธิบาย</span>
+      <button class="map-location church" type="button" aria-label="ฟังคำอธิบายโบสถ์" disabled></button>
+      <button class="map-location castle" type="button" aria-label="ฟังคำอธิบายปราสาท" disabled></button>
+      <button class="map-location house" type="button" aria-label="ฟังคำอธิบายบ้านขาย" disabled></button>
+      <button class="map-location farm" type="button" aria-label="ฟังคำอธิบายฟาร์ม" disabled></button>
+      <button class="map-location tavern-west" type="button" aria-label="ฟังคำอธิบายโรงเตี๊ยมฝั่งตะวันตก"
+        disabled></button>
+      <button class="map-location restaurant" type="button" aria-label="ฟังคำอธิบายร้านอาหาร" disabled></button>
+      <button class="map-location knight" type="button" aria-label="ฟังคำอธิบายอัศวินแห่ง Dead Garden"
+        disabled></button>
+      <button class="map-location tavern-east" type="button" aria-label="ฟังคำอธิบายโรงเตี๊ยมฝั่งตะวันออก"
+        disabled></button>
+      <button class="map-location guild" type="button" aria-label="ฟังคำอธิบายกิลด์นักผจญภัย" disabled></button>
     </section>
-    <section class="dialogue" aria-live="polite">
+    <section class="dialogue" aria-live="polite" tabindex="-1">
       <div class="speaker" id="speaker">เอลเวอร์ลิน</div>
       <p class="line" id="line"></p>
       <div class="choices" id="choices" hidden></div>
       <div class="controls">
-        <span class="hint">คลิกที่หน้าจอ หรือกด Enter เพื่ออ่านข้อความถัดไป</span>
-        <span class="counter" id="counter"></span>
-        <button class="next" id="next" type="button">ถัดไป　›</button>
+        <span class="hint">คลิกที่หน้าจอเพื่อไปต่อ</span>
       </div>
     </section>
     <button class="chat-launcher" id="chat-launcher" type="button" aria-label="เปิดบทสนทนากับเอลเวอร์ลิน"
@@ -246,13 +383,13 @@
   </main>
   <script>
     const introScenes = [
-      { speaker: "เอลเวอร์ลิน", text: "อ๊ะ!? นี่น่ะคือแผนที่ของเมืองนี้ยังไงล่ะ\nจริงสิ เมืองนี้มีชื่อว่า Dead Garden" },
-      { speaker: "เอลเวอร์ลิน", text: "เอ่อ...มันถูกเรียกแบบนั้นน่ะ" },
+      { speaker: "เอลเวอร์ลิน", text: "อ๊ะ!? นี่น่ะคือแผนที่ของเมืองนี้ยังไงล่ะ...ฉันทำเองน่ะ\nจริงสิ เมืองนี้มีชื่อว่า Dead Garden" },
+      { speaker: "เอลเวอร์ลิน", text: "...มันถูกเรียกแบบนั้นน่ะ" },
       {
         speaker: "เอลเวอร์ลิน",
         text: "เป็นไงบ้างพอดูรู้เรื่องมั้ย?",
         choices: [
-          { label: "แล้วในเมืองมีอะไรบ้างงั้นหรอ?", reply: "อยากรู้ตรงไหนหรอ? ชี้ได้เลยนะ" },
+          { label: "แล้วที่มันมีอะไรบ้างล่ะเนี่ย?", reply: "อยากรู้ตรงไหนล่ะ? ลองชี้ได้เลยนะ" },
           { label: "อื้ม! เข้าใจแล้วล่ะ", reply: "อื้ม! ถ้าสงสัยอะไรตรงไหนก็ชี้ได้เลยนะ!" }
         ]
       }
@@ -283,7 +420,7 @@
                   label: "อ่อ ไม่เคยลองเลยแหะ", reply: "ถ้ามีโอกาส ไว้ไปกินด้วยกันนะ!",
                   followUp: {
                     speaker: "เอลเวอร์ลิน",
-                    text: "งั้นตกลงตามนี้นะ! ไว้เจอกันแล้วไปลองชิมด้วยกัน",
+                    text: "ถ้ามีโอกาส ไว้ไปกินด้วยกันนะ!",
                     choices: [
                       { label: "ได้สิ", reply: "จัดไป!" },
                       { label: "ถ้ามีโอกาสล่ะนะ", reply: "เดี๋ยวก็ได้รู้กัน จะทำให้กินไม่ไหวเลยคอยดู" }
@@ -311,27 +448,38 @@
       }
     ]
 
+    const mapLocations = [
+      { selector: ".church", text: "ตรงนั้นคือโบสถ์ยังไงล่ะ! เป็นที่พักใจของคนในเมือง และก็มีนักบวชคอยช่วยเหลือคนที่เดือดร้อนด้วยนะจะบอกให้" },
+      { selector: ".castle", text: "นั่นคือปราสาทแกรนด์ เป็นที่พำนักของผู้ปกครองเมืองและเป็นศูนย์กลางการดูแล Dead Garden" },
+      { selector: ".house", name: "บ้านขาย", text: "บ้านหลังนั้น...ฉันว่าจะหาเงินมาซื้ออยู่เลยวาดลงไปด้วย ไม่มีอะไรหรอก" },
+      { selector: ".farm", name: "ฟาร์ม", text: "ตรงนั้นเป็นฟาร์มล่ะ แต่จะเลี้ยงสัตว์เป็นส่วนใหญ่...ก็นะ สภาพนี้มันปลูกพืชอะไรยากย๊าก" },
+      { selector: ".tavern-west", name: "โรงเตี๊ยมฝั่งตะวันตก", text: "โรงเตี๊ยมทางฝั่งตะวันตกเป็นที่พักของนักเดินทาง จะแวะพัก แวะกินข้าว หรือฟังข่าวสารอะไรจากคนในนั้นเพื่อได้อะไรดีๆกลับมาบ้าง" },
+      { selector: ".restaurant", name: "ร้านอาหาร", text: "ร้านอาหารตรงนั้นอร่อยเอาเรื่อง ขนาดเมนูธรรมดาอย่าง ขนมปังเนื้อสไลม์เปรี๊ยวหนาว ยังทำฉันติดใจได้เลยนะขอบอก" },
+      { selector: ".knight", name: "อัศวินแห่ง Dead Garden", text: "บริเวณนี้เป็นที่ประจำการของกองอัศวินแห่ง Dead Garden พวกเขาคอยดูแลความปลอดภัยและช่วยปกป้องเมืองนี้น่ะ" },
+      { selector: ".tavern-east", name: "โรงเตี๊ยมฝั่งตะวันออก", text: "โรงเตี๊ยมทางตะวันออก แพงกว่าทางฝั่งตะวันตกนิดหน่อย แต่ยังน้อยที่นอนก็ดี แถมมีอาหารเช้าฟรีให้ด้วย" },
+      { selector: ".guild", name: "กิลด์นักผจญภัย", text: "นั่นคือกิลด์นักผจญภัย ส่วนใหญ่ฉันใช้เวลาอยู่ที่นั่นแหละ ภารกิจส่วนที่ฉันรับจะเป็นการสำรวจ แต่มีอย่างอื่นด้วยจะลองไปดูก็ได้นะ" }
+    ];
+
     let activeScenes = introScenes;
     const speaker = document.getElementById("speaker");
     const line = document.getElementById("line");
-    const counter = document.getElementById("counter");
-    const next = document.getElementById("next");
     const choices = document.getElementById("choices");
     const game = document.querySelector(".game");
+    const dialogue = document.querySelector(".dialogue");
     const chatLauncher = document.getElementById("chat-launcher");
     let sceneIndex = 0;
     let chosenReply = "";
     let pendingFollowUp = null;
+    let pausedConversation = null;
+    let showingMapLocation = false;
     let introCompleted = false;
 
     function renderScene() {
       const scene = activeScenes[sceneIndex];
       speaker.textContent = scene.speaker;
       line.textContent = chosenReply || scene.text;
-      counter.textContent = `${sceneIndex + 1} / ${activeScenes.length}`;
       choices.replaceChildren();
       choices.hidden = !scene.choices || Boolean(chosenReply);
-      next.hidden = Boolean(scene.choices && !chosenReply);
 
       if (scene.choices && !chosenReply) {
         scene.choices.forEach((choice) => {
@@ -352,17 +500,39 @@
         });
       }
 
-      next.textContent = "ถัดไป　›";
     }
 
     function closeConversation() {
       introCompleted = true;
+      game.classList.add("is-intro-complete");
+      game.classList.remove("is-showing-location", "is-chatting");
+      document.querySelectorAll(".map-location").forEach((button) => {
+        button.disabled = false;
+      });
+      pausedConversation = null;
+      showingMapLocation = false;
       game.classList.add("is-collapsed");
       chatLauncher.focus();
     }
 
     function advance() {
       if (choices.hidden === false) return;
+      if (showingMapLocation) {
+        const returnToMap = pausedConversation.wasCollapsed;
+        activeScenes = pausedConversation.activeScenes;
+        sceneIndex = pausedConversation.sceneIndex;
+        chosenReply = pausedConversation.chosenReply;
+        pendingFollowUp = pausedConversation.pendingFollowUp;
+        pausedConversation = null;
+        showingMapLocation = false;
+        game.classList.remove("is-showing-location");
+        renderScene();
+        if (returnToMap) {
+          game.classList.add("is-collapsed");
+          chatLauncher.focus();
+        }
+        return;
+      }
       if (pendingFollowUp) {
         activeScenes = [pendingFollowUp];
         sceneIndex = 0;
@@ -387,10 +557,41 @@
       pendingFollowUp = null;
       renderScene();
       game.classList.remove("is-collapsed");
-      next.focus();
+      game.classList.remove("is-showing-location");
+      if (introCompleted) game.classList.add("is-chatting");
+      dialogue.focus();
     });
 
-    next.addEventListener("click", advance);
+    mapLocations.forEach((location) => {
+      document.querySelector(location.selector).addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (!introCompleted) return;
+        if (!showingMapLocation) {
+          pausedConversation = {
+            activeScenes,
+            sceneIndex,
+            chosenReply,
+            pendingFollowUp,
+            wasCollapsed: game.classList.contains("is-collapsed")
+          };
+        }
+        activeScenes = [{ speaker: "เอลเวอร์ลิน", text: location.text }];
+        sceneIndex = 0;
+        chosenReply = "";
+        pendingFollowUp = null;
+        showingMapLocation = true;
+        game.classList.remove("is-collapsed");
+        game.classList.add("is-showing-location");
+        renderScene();
+      });
+    });
+
+    game.addEventListener("click", (event) => {
+      if (event.target.closest("button")) return;
+      if (game.classList.contains("is-collapsed") && !showingMapLocation) return;
+      advance();
+    });
+
     document.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         if (document.activeElement?.tagName === "BUTTON") return;
@@ -398,7 +599,6 @@
         advance();
       }
     });
-    document.querySelector(".stage").addEventListener("click", advance);
 
     renderScene();
   </script>
